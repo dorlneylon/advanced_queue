@@ -47,8 +47,7 @@ void FunctorQueue<T, Functor>::pop() {
       stack_first.pop_back();
       if (stack_second.size()) {
         stack_second.pb({el, func(stack_second.back().sc, el)});
-      }
-      else {
+      } else {
         stack_second.pb({el, el});
       }
     }
