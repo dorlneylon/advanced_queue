@@ -27,7 +27,7 @@ public:
 
 template<typename T, typename Functor>
 void FunctorQueue<T, Functor>::insert(T el) {
-  if (stack_first.size()) {
+  if (!stack_first.empty()) {
     stack_first.emplace_back(el, func(el, stack_first.back().second));
     return;
   }
