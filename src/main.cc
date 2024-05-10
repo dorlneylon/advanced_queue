@@ -45,8 +45,9 @@ void FunctorQueue<T, Functor>::pop() {
     while (!values_on.empty()) {
       T element = values_on.back();
       values_on.pop_back();
+      dynamics_on.pop_back();
       values_off.emplace_back(element);
-      if (!values_off.empty()) {
+      if (!dynamics_off.empty()) {
         dynamics_off.emplace_back(Functor{}(dynamics_off.back(), element));
       } else {
         dynamics_off.emplace_back(element);
