@@ -26,15 +26,11 @@ template<typename... Args>
 void FunctorQueue<T, Functor>::emplace(Args &&...args) {
   values_on.emplace_back(std::forward<Args>(args)...);
 
-  debug(values_on, values_off, dynamics_on, dynamics_off);
-
   if (!dynamics_on.empty()) {
     dynamics_on.push_back(Functor{}(dynamics_on.back(), values_on.back()));
   } else {
     dynamics_on.emplace_back(values_on.back());
   }
-
-  debug(values_on, values_off, dynamics_on, dynamics_off);
 }
 
 template<typename T, typename Functor>

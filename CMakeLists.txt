@@ -22,8 +22,6 @@ file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(CTEST_EXECUTABLE_NAME "MyTests")
 
-add_compile_options(-DONPC)
-
 add_executable(${CTEST_EXECUTABLE_NAME}
     "${SOURCE_DIR}/main.cc"
     ${TEST_SOURCES}

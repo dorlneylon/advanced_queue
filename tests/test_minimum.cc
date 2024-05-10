@@ -17,8 +17,7 @@ struct MinFunctor {
 bool min_test_case(std::vector<int64_t> &a, int64_t k) {
   using func = MinFunctor<int64_t>;
 
-  int64_t n = a.size();
-  std::vector<int64_t> res = solve<int64_t, func>(a, k);
+  int64_t n = a.size();std::vector<int64_t> res = solve<int64_t, func>(a, k);
   std::vector<int64_t> expected(n - k + 1);
   std::multiset<int64_t> aux;
 
