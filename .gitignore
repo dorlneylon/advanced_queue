@@ -1,1 +1,5 @@
-/resources
+.idea
+.vscode
+build
+cmake-build-debug
+.clangd
