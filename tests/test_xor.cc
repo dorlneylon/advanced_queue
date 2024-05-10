@@ -15,7 +15,6 @@ struct XorFunctor {
 
 bool xor_test_case(std::vector<int64_t> &a, int64_t k) {
   using func = XorFunctor<int64_t>;
-
   int64_t n = a.size();
   std::vector<int64_t> res = solve<int64_t, func>(a, k);
   std::vector<int64_t> expected(n - k + 1);
@@ -35,8 +34,8 @@ bool xor_test_case(std::vector<int64_t> &a, int64_t k) {
 }
 
 TEST_CASE("Xor functor test", "[xor]") {
+  std::mt19937 gen(std::chrono::steady_clock::now().time_since_epoch().count());// random_device is low-quality random
   for (size_t t = 0; t < 10; ++t) {
-    std::mt19937 gen(std::chrono::steady_clock::now().time_since_epoch().count());// random_device is low-quality random
     int64_t n = gen() % 100 + 5;
     int64_t k = std::min(gen() % 100ll + 1, n);
 

@@ -8,81 +8,86 @@
 #include <utility>
 #include <vector>
 
-template<typename T>
-using Pair = std::pair<T, T>;
-
 template<typename T, typename Functor>
 struct FunctorQueue {
 private:
-  std::vector<Pair<T>> stack_first, stack_second;
-  Functor func;
+  std::vector<T> values_on, values_off;
+  std::vector<T> dynamics_on, dynamics_off;
 
 public:
-  void insert(T el);
+  template<typename... Args>
+  void emplace(Args &&...);
   void pop();
   T get();
-
-  FunctorQueue(Functor func = Functor{}) : func(func) {}
 };
 
 template<typename T, typename Functor>
-void FunctorQueue<T, Functor>::insert(T el) {
-  if (!stack_first.empty()) {
-    stack_first.emplace_back(el, func(el, stack_first.back().second));
-    return;
+template<typename... Args>
+void FunctorQueue<T, Functor>::emplace(Args &&...args) {
+  values_on.emplace_back(std::forward<Args>(args)...);
+
+  debug(values_on, values_off, dynamics_on, dynamics_off);
+
+  if (!dynamics_on.empty()) {
+    dynamics_on.push_back(Functor{}(dynamics_on.back(), values_on.back()));
+  } else {
+    dynamics_on.emplace_back(values_on.back());
   }
-  stack_first.emplace_back(el, el);
+
+  debug(values_on, values_off, dynamics_on, dynamics_off);
 }
 
 template<typename T, typename Functor>
 void FunctorQueue<T, Functor>::pop() {
   do {
-    if (!stack_second.empty()) {
-      stack_second.pop_back();
+    if (!values_off.empty()) {
+      dynamics_off.pop_back();
+      values_off.pop_back();
       return;
     }
 
-    while (!stack_first.empty()) {
-      T el = stack_first.back().first;
-      stack_first.pop_back();
-      if (!stack_second.empty()) {
-        stack_second.emplace_back(el, func(stack_second.back().second, el));
+    while (!values_on.empty()) {
+      T element = values_on.back();
+      values_on.pop_back();
+      values_off.emplace_back(element);
+      if (!values_off.empty()) {
+        dynamics_off.emplace_back(Functor{}(dynamics_off.back(), element));
       } else {
-        stack_second.emplace_back(el, el);
+        dynamics_off.emplace_back(element);
       }
     }
-  } while (stack_second.size());
+  } while (!values_off.empty());
 }
 
 template<typename T, typename Functor>
 T FunctorQueue<T, Functor>::get() {
-  assert(!stack_first.empty() || !stack_second.empty());
-  if (stack_first.empty()) {
-    return stack_second.back().second;
+  assert(!values_on.empty() || !values_off.empty());
+  if (values_on.empty()) {
+    return dynamics_off.back();
   }
-  if (stack_second.empty()) {
-    return stack_first.back().second;
+  if (values_off.empty()) {
+    return dynamics_on.back();
   }
-  return func(stack_first.back().second, stack_second.back().second);
+  return Functor{}(dynamics_on.back(), dynamics_off.back());
 }
 
 template<typename T, typename Functor>
 std::vector<T> solve(std::vector<T> &a, int64_t k) {
   int64_t n = a.size();
-  FunctorQueue<T, Functor> mq;
-  std::vector<T> ans;
+  FunctorQueue<T, Functor> fq;
+  std::vector<T> result;
 
   for (size_t i = 0; i < k; ++i) {
-    mq.insert(a[i]);
+    fq.emplace(a[i]);
   }
 
-  ans.push_back(mq.get());
+  result.push_back(fq.get());
 
   for (size_t l = 1, r = k; r < n; ++r, ++l) {
-    mq.pop();
-    mq.insert(a[r]);
-    ans.push_back(mq.get());
+    fq.pop();
+    fq.emplace(a[r]);
+    result.push_back(fq.get());
   }
 
-  return ans;
+  return result;
 }

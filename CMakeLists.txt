@@ -4,6 +4,9 @@ set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_C_COMPILER /opt/homebrew/bin/gcc CACHE PATH "" FORCE)
 set(CMAKE_CXX_COMPILER /opt/homebrew/bin/g++ CACHE PATH "" FORCE)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(MyProjectName)
 
@@ -18,6 +21,8 @@ file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
 
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(CTEST_EXECUTABLE_NAME "MyTests")
+
+add_compile_options(-DONPC)
 
 add_executable(${CTEST_EXECUTABLE_NAME}
     "${SOURCE_DIR}/main.cc"

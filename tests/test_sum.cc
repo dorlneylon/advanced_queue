@@ -36,8 +36,8 @@ bool sum_test_case(std::vector<int64_t> &a, int64_t k) {
 }
 
 TEST_CASE("Sum functor test", "[sum]") {
+  std::mt19937 gen(std::chrono::steady_clock::now().time_since_epoch().count());// random_device is low-quality random
   for (int64_t t = 0; t < 10; ++t) {
-    std::mt19937 gen(std::chrono::steady_clock::now().time_since_epoch().count());// random_device is low-quality random
     int64_t n = gen() % 100 + 5;
     int64_t k = std::min(gen() % 100ll + 1, n);
 
